@@ -35,7 +35,7 @@ function App() {
 
           {/* Dashboard Route */}
           <Route
-            path="/dashboard"
+            path="/main"
             element={
               isLoggedIn ? <Main /> : <Login setIsLoggedIn={setIsLoggedIn} />
             }

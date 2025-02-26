@@ -1,64 +1,119 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import styled from "styled-components";
+import { motion } from "framer-motion";
+import { User, Lock, ArrowLeft, Star } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-// Styled Components for Login
-const LoginContainer = styled.div`
+const LoginContainer = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: #f0f4f8;
+`;
+
+const LoginCard = styled(motion.div)`
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
 `;
 
 const LoginForm = styled.form`
-  background-color: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const LoginHeader = styled.div`
   text-align: center;
+  margin-bottom: 2rem;
 `;
 
 const LoginTitle = styled.h2`
-  font-size: 1.875rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #0f4c4c;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 `;
 
-const InputField = styled.input`
+const LoginSubtitle = styled.p`
+  color: #6b7280;
+`;
+
+const InputGroup = styled.div`
+  position: relative;
+`;
+
+const InputIcon = styled.div`
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+`;
+
+const Input = styled.input`
   width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
+  padding: 0.75rem 1rem 0.75rem 3rem;
   border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+
   &:focus {
     outline: none;
     border-color: #0f4c4c;
   }
 `;
 
-const SubmitButton = styled.button`
+const ForgotPassword = styled.a`
+  text-align: right;
+  color: #0f4c4c;
+  font-size: 0.875rem;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const SubmitButton = styled(motion.button)`
   width: 100%;
   padding: 0.75rem;
   background-color: #0f4c4c;
   color: white;
   border: none;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.3s;
+
   &:hover {
-    background-color: #0f4c4c90;
+    background-color: #0d3b3b;
+  }
+`;
+
+const BackLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  color: #0f4c4c;
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
 const ErrorMessage = styled.p`
   color: #ef4444;
-  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
 `;
 
 const Login = () => {
@@ -84,38 +139,74 @@ const Login = () => {
 
       // Save token and user details to localStorage
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user)); // Save user details
+      localStorage.setItem("user", JSON.stringify(response.data.user));
 
-      // Redirect to dashboard after successful login
-      navigate("/dashboard");
+      navigate("/main");
     } catch (err) {
-      setError(err.response?.data?.error);
+      setError(
+        err.response?.data?.error || "An error occurred. Please try again."
+      );
     }
   };
 
   return (
-    <LoginContainer>
-      <LoginForm onSubmit={handleSubmit}>
-        <LoginTitle>Login</LoginTitle>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        <InputField
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <SubmitButton type="submit">Login</SubmitButton>
-      </LoginForm>
+    <LoginContainer
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <LoginCard
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
+        <LoginHeader>
+          <Star size={40} color="#0f4c4c" />
+          <LoginTitle>Welcome Back</LoginTitle>
+          <LoginSubtitle>Log in to access your account</LoginSubtitle>
+        </LoginHeader>
+        <LoginForm onSubmit={handleSubmit}>
+          <InputGroup>
+            <InputIcon>
+              <User size={20} />
+            </InputIcon>
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </InputGroup>
+          <InputGroup>
+            <InputIcon>
+              <Lock size={20} />
+            </InputIcon>
+            <Input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </InputGroup>
+          <ForgotPassword href="#">Forgot password?</ForgotPassword>
+          <SubmitButton
+            type="submit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Log In
+          </SubmitButton>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+        </LoginForm>
+        <BackLink to="/">
+          <ArrowLeft size={16} style={{ marginRight: "0.5rem" }} />
+          Back to Home
+        </BackLink>
+      </LoginCard>
     </LoginContainer>
   );
 };
