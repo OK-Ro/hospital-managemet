@@ -1,4 +1,4 @@
-exports.doctorsData = [
+exports.initialPatients = [
   {
     id: "D001",
     name: "Dr. Emily Johnson",
